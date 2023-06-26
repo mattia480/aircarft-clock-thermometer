@@ -19,10 +19,12 @@ They can be bought in the [Sunton Store](https://www.aliexpress.com/store/110019
 ![Components](assets/images/Berna_Fly_Clock_Thermometer_bb.png)
 
 #### 3D Print Case
+##### Front + Back
 ![3D Print Case Complete](assets/images/Berna_Fly_Clock_Thermometer_3D_Case_All.png)
+##### Front
 ![3D Print Case Front](assets/images/Berna_Fly_Clock_Thermometer_3D_Case_Front.png)
+##### Back
 ![3D Print Case Back](assets/images/Berna_Fly_Clock_Thermometer_3D_Case_Back.png)
 
 #### UI Example
-![UI Example](assets/images/Berna_Fly_Clock_Thermometer_UI1.png)
-![UI Example](assets/images/Berna_Fly_Clock_Thermometer_UI2.png)
+![UI Example](assets/images/Berna_Fly_Clock_Thermometer_UI.png)
