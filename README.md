@@ -10,6 +10,7 @@ They can be bought in the [Sunton Store](https://www.aliexpress.com/store/110019
 
 ![ESP32-3248S035R front](assets/images/esp32-3248S035-front.png)
 ![ESP32-3248S035R back](assets/images/esp32-3248S035-back.png)
+![ESP32-2432S028 schematic](assets/images/esp32_2432s028_i2c.jpg)
 
 #### Circuit Diagram
 
