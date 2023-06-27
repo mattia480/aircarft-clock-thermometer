@@ -1,0 +1,12 @@
+SET(SOURCES screens/ui_SplashScreen.c
+    screens/ui_Main.c
+    screens/ui_Settings.c
+    ui.c
+    ui_helpers.c
+    images/ui_img_adc_logo_png.c
+    images/ui_img_berna_logo_png.c
+    images/ui_img_settings_icon_png.c
+    images/ui_img_brightness_less_icon_png.c
+    images/ui_img_brightness_more_icon_png.c)
+
+add_library(ui ${SOURCES})

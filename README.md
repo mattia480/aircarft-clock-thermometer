@@ -28,3 +28,24 @@ They can be bought in the [Sunton Store](https://www.aliexpress.com/store/110019
 
 #### UI Example
 ![UI Example](assets/images/Berna_Fly_Clock_Thermometer_UI.png)
+
+### Code
+
+The project can be edited with [Visual Studio Code](https://code.visualstudio.com) with [PlatformIO](https://platformio.org) extension installed.
+The GUI is made with [SquareLine Studio](https://squareline.io)
+This project depends on some standard libraries:
+- SPI @ 2.0.0
+- lvgl @ 8.3.7
+- RTClib @ 2.1.1
+- ESP32Time @ 2.0.0
+- Timezone @ 1.2.4
+- Adafruit Unified Sensor @ 1.1.9
+- Adafruit BMP085 Library @ 1.2.2
+- DHT sensor library @ 1.4.4
+- EEPROM @ 2.0.0
+
+To use the LVGL library, a lv_conf.h file is required to define the settings for LVGL.
+The provided ```lv_conf.h``` file should be copied in the LVGL library at ```.pio/libdeps/esp32dev/lvgl/lv_conf_template.h```.
+
+To remove CPU usage and FPS count set ```#define LV_USE_PERF_MONITOR 0``` in  ```lv_conf.h```
+To remove used memory and the memory fragmentation set ```#define LV_USE_MEM_MONITOR 0``` in  ```lv_conf.h```
