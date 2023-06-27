@@ -1,10 +1,10 @@
 # ESP32 Clock & Temperature Circuit and Diagram for Ultralight Aircraft
 
-This repository contains a simple blueprint, including schematics, diagrams and code for the installation of a Clock & Temperature display based on ESP32 on ultralight aircraft or for general aviation aircraft classified as experimental.
+This repository contains a simple blueprint, including schematics, diagrams and code for the installation of a Clock & Temperature display based on ESP32 on ultralight aircraft or for general aviation aircraft classified as experimental
 
-The board is available on AliExpress for decent prices and offer a lot.
+The board is available on AliExpress for decent prices and offer a lot
 
-They can be bought in the [Sunton Store](https://www.aliexpress.com/store/1100192306) on AliExpress but saw them also from other sellers.
+They can be bought in the [Sunton Store](https://www.aliexpress.com/store/1100192306) on AliExpress but saw them also from other sellers
 
 - [ESP32-2432S028R - 2.8" 240x320 TFT Resistive touch](https://www.aliexpress.com/item/1005004502250619.html)
 - [ESP32-3248S035R/C 3.5" 320x480 TFT Resistive/Capacitive touch](https://www.aliexpress.com/item/1005004632953455.html)
@@ -33,9 +33,9 @@ They can be bought in the [Sunton Store](https://www.aliexpress.com/store/110019
 
 ### Code
 
-The project can be edited with [Visual Studio Code](https://code.visualstudio.com) with [PlatformIO](https://platformio.org) extension installed.
+The project can be edited with [Visual Studio Code](https://code.visualstudio.com) with [PlatformIO](https://platformio.org) extension installed
 
-The GUI is made with [SquareLine Studio](https://squareline.io)
+The GUI can be edited with [SquareLine Studio](https://squareline.io)
 
 This project depends on some standard libraries:
 - SPI @ 2.0.0
@@ -48,7 +48,7 @@ This project depends on some standard libraries:
 - DHT sensor library @ 1.4.4
 - EEPROM @ 2.0.0
 
-To use the LVGL library, a lv_conf.h file is required to define the settings for LVGL.
+To use the LVGL library, a lv_conf.h file is required to define the settings for LVGL
 
 The provided ```lv_conf.h``` file should be copied in the LVGL library at ```.pio/libdeps/esp32dev/lvgl/lv_conf.h```
 
