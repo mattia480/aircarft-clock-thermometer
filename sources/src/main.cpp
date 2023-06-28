@@ -18,8 +18,8 @@
 #define EEPROM_SIZE 512
 
 // To compensate the internal BMP termhal sensor decrese the temperature measured by the sensor of BMP_COMPENSATION_TEMP °C in BMP_COMPENSATION_MIN minutes
-#define BMP_COMPENSATION_TEMP -3.5
-#define BMP_COMPENSATION_MIN 17.5
+#define BMP_COMPENSATION_TEMP -3.4
+#define BMP_COMPENSATION_MIN 34
 
 // I2C Setup
 TwoWire I2CBME = TwoWire(0);
