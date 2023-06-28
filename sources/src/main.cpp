@@ -15,8 +15,11 @@
 #define I2C_SCL 22
 #define DHT_PIN 4
 #define DHTTYPE DHT21
-#define BMP_COMPENSATION_TEMP -3.5
 #define EEPROM_SIZE 512
+
+// To compensate the internal BMP termhal sensor decrese the temperature measured by the sensor of BMP_COMPENSATION_TEMP °C in BMP_COMPENSATION_MIN minutes
+#define BMP_COMPENSATION_TEMP -3.5
+#define BMP_COMPENSATION_MIN 17.5
 
 // I2C Setup
 TwoWire I2CBME = TwoWire(0);
@@ -38,7 +41,7 @@ DHT outsideTempSensor(DHT_PIN, DHTTYPE);
 
 // System variables
 time_t startRunTime;
-bool tftInit, i2cserialInit, rtcInit, bmpInit, dhtInit, showRuntimeSeconds, showPressure;
+bool tftInit, i2cserialInit, rtcInit, bmpInit, dhtInit, bmpCompensationDone, showRuntimeSeconds, showPressure;
 int fuelTankChangeAlertMin, fuelTankChangeAlertMessageBoxCounter;
 lv_obj_t * fuelTankChangeAlertMessageBox;
 
@@ -120,6 +123,9 @@ void setup()
   // Set to show pressure value as default
   showPressure = true;
 
+  // Set bool bmpCompensationDone to false to avoid duplicate in case of millis restart from 0
+  bmpCompensationDone = false;
+
   Serial.println("Initialization complete!");
 
   // Show error
@@ -152,11 +158,27 @@ void updateDatimeFromRTC() {
   lv_label_set_text(ui_HourText, buf);
 }
 
+double getBMPCorrectionValue() {
+  if (BMP_COMPENSATION_TEMP == 0 || BMP_COMPENSATION_MIN <= 0)
+    return 0;
+  
+  long runtimeMillis = millis();
+
+  // If total time is not over
+  if (!bmpCompensationDone && runtimeMillis <= BMP_COMPENSATION_MIN*60000) {
+    double multiplierMillis = BMP_COMPENSATION_TEMP/(BMP_COMPENSATION_MIN*60000);
+    return runtimeMillis * multiplierMillis;
+  } else {
+    bmpCompensationDone = true;
+    return BMP_COMPENSATION_TEMP;
+  }
+}
+
 void updateInsideTemperatureAndPressure() {
   char status, buf[25];
   double T = -1, P = -1;
 
-  T = (double) bmp.readTemperature() + BMP_COMPENSATION_TEMP;
+  T = (double) bmp.readTemperature() + getBMPCorrectionValue();
   P = (double) bmp.readSealevelPressure()/100;
 
   // Update inside temperature
@@ -225,10 +247,10 @@ void updateRunTime() {
 
 static void FuelTankChangeAlertMessageBoxEventCb(lv_event_t * e)
 {
-	// Close Message Box, reset backlight and temp variables
+  // Close Message Box, reset backlight and temp variables
   smartdisplay_tft_set_backlight((uint16_t) lv_slider_get_value(ui_BacklightSlider));
   fuelTankChangeAlertMessageBoxCounter = 0;
-	lv_msgbox_close(fuelTankChangeAlertMessageBox);
+  lv_msgbox_close(fuelTankChangeAlertMessageBox);
 }
 
 void checkFuelTankChangeAlert() {

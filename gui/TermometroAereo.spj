@@ -2598,7 +2598,7 @@
                   },
                   {
                     "nid": -490845420,
-                    "strtype": "_custom/action",
+                    "strtype": "_event/action",
                     "strval": "CALL FUNCTION",
                     "childs": [
                       {
@@ -2934,7 +2934,7 @@
                   },
                   {
                     "nid": -1801677184,
-                    "strtype": "_custom/action",
+                    "strtype": "_event/action",
                     "strval": "CALL FUNCTION",
                     "childs": [
                       {
@@ -10547,7 +10547,7 @@
               {
                 "disabled": false,
                 "nid": -215008004,
-                "strtype": "DROPDOWN/EventHandler",
+                "strtype": "_event/EventHandler",
                 "strval": "VALUE_CHANGED",
                 "childs": [
                   {
@@ -10570,7 +10570,7 @@
                   },
                   {
                     "nid": 1152069827,
-                    "strtype": "_custom/action",
+                    "strtype": "_event/action",
                     "strval": "CALL FUNCTION",
                     "childs": [
                       {
@@ -14165,9 +14165,9 @@
     "theme_dark": true,
     "theme_color1": 5,
     "theme_color2": 0,
-    "exportFolderPath": "F:\\esp32-smartdisplay-main\\examples\\src\\ui",
+    "exportFolderPath": "F:\\aero_clock_git\\aircarft-clock-thermometer\\sources\\src\\ui",
     "projectExportFolderPath": "",
-    "backup_cnt": 74,
+    "backup_cnt": 75,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "CPP_FILE",
