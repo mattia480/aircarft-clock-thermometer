@@ -9,7 +9,7 @@
 #include <lvgl.h>
 #include "ui/ui.h"
 
-#define BERNA_FLY_CLOCK_VERSION "1.1"
+#define BERNA_FLY_CLOCK_VERSION "1.2"
 
 #define I2C_SDA 27
 #define I2C_SCL 22
@@ -18,8 +18,8 @@
 #define EEPROM_SIZE 512
 
 // To compensate the internal BMP termhal sensor decrese the temperature measured by the sensor of BMP_COMPENSATION_TEMP °C in BMP_COMPENSATION_MIN minutes
-#define BMP_COMPENSATION_TEMP -3.4
-#define BMP_COMPENSATION_MIN 34
+#define BMP_COMPENSATION_TEMP -3.1
+#define BMP_COMPENSATION_MIN 17
 
 // I2C Setup
 TwoWire I2CBME = TwoWire(0);
