@@ -58,7 +58,7 @@ void smartdisplay_init()
   ledcAttachPin(LED_PIN_B, LED_PWM_CHANNEL_B);*/
 
   // Setup CDS Light sensor
-  analogSetAttenuation(ADC_0db); // 0dB(1.0x) 0~800mV
+  analogSetPinAttenuation(CDS_PIN, ADC_0db); // 0dB(1.0x) 0~800mV
   pinMode(CDS_PIN, INPUT);
 
   // Audio

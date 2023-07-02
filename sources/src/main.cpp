@@ -9,17 +9,17 @@
 #include <lvgl.h>
 #include "ui/ui.h"
 
-#define BERNA_FLY_CLOCK_VERSION "1.2"
+#define BERNA_FLY_CLOCK_VERSION "1.3"
 
 #define I2C_SDA 27
 #define I2C_SCL 22
 #define DHT_PIN 4
+#define THERMISTOR_PIN 35
 #define DHTTYPE DHT21
 #define EEPROM_SIZE 512
 
-// To compensate the internal BMP termhal sensor decrese the temperature measured by the sensor of BMP_COMPENSATION_TEMP °C in BMP_COMPENSATION_MIN minutes
-#define BMP_COMPENSATION_TEMP -3.1
-#define BMP_COMPENSATION_MIN 17
+#define BMP_READ_INTERVAL 3000UL // 3 Seconds
+#define THERMISTOR_READ_INTERVAL 3000UL // 3 Seconds
 
 // I2C Setup
 TwoWire I2CBME = TwoWire(0);
@@ -33,16 +33,24 @@ TimeChangeRule mySTD = {"CET", Last, Sun, Nov, 2, 60}; //Standard time = UTC - 1
 Timezone myTZ(myDST, mySTD);
 TimeChangeRule *tcr;
 
-// Pressure and temperature sensor (inside)
+// Pressure sensor (inside)
 Adafruit_BMP085 bmp;
+
+// Temperature sensor thermistor (inside)
+double adcMax = 4095.0; // ADC resolution 12-bit (0-4095)
+double R1 = 46400.0;    // Resistnce of the known resistor
+double Ro = 37000.0;    // Resistance of Thermistor at 25 degree Celsius
+double Beta = 3950.0;   // Beta value
+double To = 298.15;     // Temperature in Kelvin for 25 degree Celsius
 
 // Temperature sensor (outside)
 DHT outsideTempSensor(DHT_PIN, DHTTYPE);
 
 // System variables
 time_t startRunTime;
-bool tftInit, i2cserialInit, rtcInit, bmpInit, dhtInit, bmpCompensationDone, showRuntimeSeconds, showPressure;
+bool tftInit, i2cserialInit, rtcInit, bmpInit, dhtInit, showRuntimeSeconds, showPressure;
 int fuelTankChangeAlertMin, fuelTankChangeAlertMessageBoxCounter;
+unsigned long bmpPollingTarget = 0UL, thermistorPollingTarget = 0UL;
 lv_obj_t * fuelTankChangeAlertMessageBox;
 
 void setup()
@@ -65,7 +73,7 @@ void setup()
   rtcInit = rtc.begin(&I2CBME); // Initialize RTC
   bmpInit = bmp.begin(BMP085_ULTRAHIGHRES, &I2CBME); // Initialize BMP Pressure Sensor
   outsideTempSensor.begin(); // Initialize DHT Temperature Sensor
-  delay(500);
+  delay(700);
   dhtInit = !(isnan(outsideTempSensor.readHumidity()) || isnan(outsideTempSensor.readTemperature()));
 
   // Only for set RTC DateTime - (1m 30s for compile time and upload)
@@ -92,7 +100,7 @@ void setup()
     startRunTime = esp32Rtc.getEpoch();
   }
 
-  // Check if BMP (Inside Temperature Sensor) Connection is ok
+  // Check if BMP (Pressure) Connection is ok
   if (bmpInit) {
     Serial.println("BMP init OK");
   } else{
@@ -107,6 +115,9 @@ void setup()
     Serial.println("DHT init ERROR!");
     sprintf(errorBuffer, "%sDHT init ERROR!\n", errorBuffer);
   }
+  
+  // Initialize Thermistor for inside temperature
+  pinMode(THERMISTOR_PIN, INPUT);
 
   // Load Fuel Tank Change Alert Setting from EEPROM address 0
   fuelTankChangeAlertMessageBoxCounter = 0;
@@ -122,9 +133,6 @@ void setup()
   
   // Set to show pressure value as default
   showPressure = true;
-
-  // Set bool bmpCompensationDone to false to avoid duplicate in case of millis restart from 0
-  bmpCompensationDone = false;
 
   Serial.println("Initialization complete!");
 
@@ -158,43 +166,86 @@ void updateDatimeFromRTC() {
   lv_label_set_text(ui_HourText, buf);
 }
 
-double getBMPCorrectionValue() {
-  if (BMP_COMPENSATION_TEMP == 0 || BMP_COMPENSATION_MIN <= 0)
-    return 0;
-  
-  long runtimeMillis = millis();
-
-  // If total time is not over
-  if (!bmpCompensationDone && runtimeMillis <= BMP_COMPENSATION_MIN*60000) {
-    double multiplierMillis = BMP_COMPENSATION_TEMP/(BMP_COMPENSATION_MIN*60000);
-    return runtimeMillis * multiplierMillis;
-  } else {
-    bmpCompensationDone = true;
-    return BMP_COMPENSATION_TEMP;
-  }
-}
-
-void updateInsideTemperatureAndPressure() {
+void updatePressure() {
   char status, buf[25];
-  double T = -1, P = -1;
+  double P = -1;
 
-  T = (double) bmp.readTemperature() + getBMPCorrectionValue();
   P = (double) bmp.readSealevelPressure()/100;
 
-  // Update inside temperature
-  if(T >= 0) {
-    sprintf(buf,"+%0.1f °C",T);
-  }
-  else {
-    sprintf(buf,"%0.1f °C",T);
-  }
-  lv_label_set_text(ui_InTempText, buf);
-  
   // Update pressure
   if (showPressure) {
     sprintf(buf,"%0.1f hPa", P);
     lv_label_set_text(ui_PressureText, buf);
   }
+}
+
+float thermistorAverageTemperature(float currentValueFromThermistor) {
+  const int qtyReads = 25;
+  static bool fistExecution = true;
+  static float readings[qtyReads];
+  static int readIndex = 0;
+  static float total = 0;
+  float average = 0;
+
+  // If is the first execution initialize array
+  if (fistExecution == true) {
+    // Fill the entire array with current value
+    for (int i = 0; i < qtyReads; i++) { 
+      readings[i] = currentValueFromThermistor;
+    }
+    total = currentValueFromThermistor * qtyReads; // Average value at first execution
+    fistExecution = false;
+  }
+  
+  // Remove last value readed from the array
+  total = total - readings[readIndex];
+
+  // Set current value to active index
+  readings[readIndex] = currentValueFromThermistor;
+
+  // Add the current value readed from thermistor to total
+  total = total + readings[readIndex];
+
+  // Increment index
+  readIndex++;
+
+  // Reset index to 0 if the end of the array is reached
+  if (readIndex >= qtyReads)
+    readIndex = 0;
+
+  // Calculate the average value
+  average = total / qtyReads;
+
+  return average;
+}
+
+float getInsideTemperature() {
+  int Vo; // Holds the ADC Value
+  float R2, tKelvin, tCelsius, tFahrenheit;
+  char status, buf[25];
+
+  Vo = analogRead(THERMISTOR_PIN);
+  R2 = R1 * (adcMax / (float)Vo - 1.0); // Resistance of the Thermistor
+  tKelvin = (Beta * To) / (Beta + (To * log(R2 / Ro)));
+  tCelsius = tKelvin - 273.15;
+  tFahrenheit = (tCelsius * 9.0) / 5.0 + 32.0;
+
+  // Update average read from thermistor and return
+  return thermistorAverageTemperature(tCelsius);
+}
+
+void updateInsideTemperature() {
+  char buf[25];
+  float tCelsius = getInsideTemperature();
+
+  // Update inside temperature
+  if(tCelsius >= 0) {
+    sprintf(buf,"+%0.1f °C",tCelsius);
+  }
+  else {
+    sprintf(buf,"%0.1f °C",tCelsius);
+  }
+  lv_label_set_text(ui_InTempText, buf);
 }
 
 void updateOutsideTemperature() {
@@ -305,7 +356,18 @@ void loop()
     updateDatimeFromRTC();
 
   if(bmpInit)
-    updateInsideTemperatureAndPressure();
+    // Read value from BMP sensor every BMP_READ_INTERVAL or at startup
+    if ((millis () - bmpPollingTarget >= BMP_READ_INTERVAL) || bmpPollingTarget == 0) {
+      bmpPollingTarget = millis ();
+      updatePressure();
+    }
+  
+  // Read value from THERMISTOR sensor every THERMISTOR_READ_INTERVAL or at startup
+  if ((millis () - thermistorPollingTarget >= THERMISTOR_READ_INTERVAL) || thermistorPollingTarget == 0) {
+    thermistorPollingTarget = millis ();
+    updateInsideTemperature();
+  }
+  getInsideTemperature();
 
   if(dhtInit)
     updateOutsideTemperature();
