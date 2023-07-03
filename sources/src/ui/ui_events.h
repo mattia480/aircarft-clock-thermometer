@@ -21,6 +21,8 @@ void AdjustRtcIsValid(lv_event_t * e);
 void AdjustRtcIsValid(lv_event_t * e);
 void AdjustRtcIsValid(lv_event_t * e);
 void AdjustRtc(lv_event_t * e);
+void AdjustIntTempValueChange(lv_event_t * e);
+void AdjustExtTempValueChange(lv_event_t * e);
 
 #ifdef __cplusplus
 } /*extern "C"*/

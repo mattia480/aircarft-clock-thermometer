@@ -76,6 +76,20 @@ lv_obj_t * ui_MinuteDropdown;
 void ui_event_SaveClockBtn(lv_event_t * e);
 lv_obj_t * ui_SaveClockBtn;
 lv_obj_t * ui_SaveclockBtnLabel;
+
+// SCREEN: ui_AdvancedSettings
+void ui_AdvancedSettings_screen_init(void);
+lv_obj_t * ui_AdvancedSettings;
+lv_obj_t * ui_AdvancedSettingsLabel;
+lv_obj_t * ui_AdjustInsideTempLabel;
+void ui_event_AdjustInsideTempDropdown(lv_event_t * e);
+lv_obj_t * ui_AdjustInsideTempDropdown;
+lv_obj_t * ui_AdjustOutsideTempLabel;
+void ui_event_AdjustOutsideTempDropdown(lv_event_t * e);
+lv_obj_t * ui_AdjustOutsideTempDropdown;
+void ui_event_BackSettingsBtn(lv_event_t * e);
+lv_obj_t * ui_BackSettingsBtn;
+lv_obj_t * ui_BackSettingsBtnLabel;
 lv_obj_t * ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
@@ -93,8 +107,11 @@ void ui_event_SettingBtn(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * target = lv_event_get_target(e);
-    if(event_code == LV_EVENT_CLICKED) {
+    if(event_code == LV_EVENT_PRESSED) {
         _ui_screen_change(ui_Settings, LV_SCR_LOAD_ANIM_NONE, 0, 0);
+    }
+    if(event_code == LV_EVENT_LONG_PRESSED) {
+        _ui_screen_change(ui_AdvancedSettings, LV_SCR_LOAD_ANIM_NONE, 500, 0);
     }
 }
 void ui_event_PressureHumidityBtn(lv_event_t * e)
@@ -193,6 +210,30 @@ void ui_event_SaveClockBtn(lv_event_t * e)
         AdjustRtc(e);
     }
 }
+void ui_event_AdjustInsideTempDropdown(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * target = lv_event_get_target(e);
+    if(event_code == LV_EVENT_VALUE_CHANGED) {
+        AdjustIntTempValueChange(e);
+    }
+}
+void ui_event_AdjustOutsideTempDropdown(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * target = lv_event_get_target(e);
+    if(event_code == LV_EVENT_VALUE_CHANGED) {
+        AdjustExtTempValueChange(e);
+    }
+}
+void ui_event_BackSettingsBtn(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t * target = lv_event_get_target(e);
+    if(event_code == LV_EVENT_CLICKED) {
+        _ui_screen_change(ui_Main, LV_SCR_LOAD_ANIM_NONE, 0, 0);
+    }
+}
 
 ///////////////////// SCREENS ////////////////////
 
@@ -205,6 +246,7 @@ void ui_init(void)
     ui_SplashScreen_screen_init();
     ui_Main_screen_init();
     ui_Settings_screen_init();
+    ui_AdvancedSettings_screen_init();
     ui____initial_actions0 = lv_obj_create(NULL);
     lv_disp_load_scr(ui_SplashScreen);
 }

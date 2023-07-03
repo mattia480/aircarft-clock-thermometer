@@ -50,6 +50,7 @@ DHT outsideTempSensor(DHT_PIN, DHTTYPE);
 time_t startRunTime;
 bool tftInit, i2cserialInit, rtcInit, bmpInit, dhtInit, showRuntimeSeconds, showPressure;
 int fuelTankChangeAlertMin, fuelTankChangeAlertMessageBoxCounter;
+float insideTemperatureCorrection, outsideTemperatureCorrection;
 unsigned long bmpPollingTarget = 0UL, thermistorPollingTarget = 0UL;
 lv_obj_t * fuelTankChangeAlertMessageBox;
 
@@ -131,6 +132,16 @@ void setup()
   else
     lv_obj_clear_state(ui_ShowRunTimeSecondsSwitch, LV_STATE_CHECKED);
   
+  // Load Internal Temperature Correction Setting from EEPROM address 10
+  insideTemperatureCorrection = 0;
+  insideTemperatureCorrection = EEPROM.readFloat(10);
+  lv_dropdown_set_selected(ui_AdjustInsideTempDropdown, (50 + (insideTemperatureCorrection*10)));
+
+  // Load External Temperature Correction Setting from EEPROM address 20
+  outsideTemperatureCorrection = 0;
+  outsideTemperatureCorrection = EEPROM.readFloat(20);
+  lv_dropdown_set_selected(ui_AdjustOutsideTempDropdown, (50 + (outsideTemperatureCorrection*10)));
+
   // Set to show pressure value as default
   showPressure = true;
 
@@ -236,7 +247,7 @@ float getInsideTemperature() {
 
 void updateInsideTemperature() {
   char buf[25];
-  float tCelsius = getInsideTemperature();
+  float tCelsius = getInsideTemperature() + insideTemperatureCorrection;
 
   // Update inside temperature
   if(tCelsius >= 0) {
@@ -252,7 +263,7 @@ void updateOutsideTemperature() {
   char buf[25];
 
   double H = (double) outsideTempSensor.readHumidity();
-  double T = (double) outsideTempSensor.readTemperature();
+  double T = (double) outsideTempSensor.readTemperature() + outsideTemperatureCorrection;
 
   // Update outside teperature
   if (T <= 3.5)

@@ -148,3 +148,4 @@ extern ESP32Time esp32Rtc;
 extern time_t startRunTime;
 extern bool rtcInit, showRuntimeSeconds, showPressure;
 extern int fuelTankChangeAlertMin;
+extern float insideTemperatureCorrection, outsideTemperatureCorrection;

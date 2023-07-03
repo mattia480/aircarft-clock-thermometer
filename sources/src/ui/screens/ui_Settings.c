@@ -89,7 +89,7 @@ void ui_Settings_screen_init(void)
     lv_obj_set_height(ui_ShowRunTimeSeconds, LV_SIZE_CONTENT);    /// 1
     lv_obj_set_x(ui_ShowRunTimeSeconds, 5);
     lv_obj_set_y(ui_ShowRunTimeSeconds, 124);
-    lv_label_set_text(ui_ShowRunTimeSeconds, "Show run time seconds");
+    lv_label_set_text(ui_ShowRunTimeSeconds, "Show run-time seconds");
 
     ui_ShowRunTimeSecondsSwitch = lv_switch_create(ui_Settings);
     lv_obj_set_width(ui_ShowRunTimeSecondsSwitch, 50);

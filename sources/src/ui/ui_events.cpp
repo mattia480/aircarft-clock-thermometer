@@ -139,3 +139,21 @@ void ResetRuntime(lv_event_t * e)
 {
 	ResetRuntimeMessageBox();
 }
+
+void AdjustIntTempValueChange(lv_event_t * e)
+{
+	char buf[10];
+	lv_dropdown_get_selected_str(ui_AdjustInsideTempDropdown, buf, 10);
+	insideTemperatureCorrection = atof(buf);
+	EEPROM.writeFloat(10, insideTemperatureCorrection);
+	EEPROM.commit();
+}
+
+void AdjustExtTempValueChange(lv_event_t * e)
+{
+	char buf[10];
+	lv_dropdown_get_selected_str(ui_AdjustOutsideTempDropdown, buf, 10);
+	outsideTemperatureCorrection = atof(buf);
+	EEPROM.writeFloat(20, outsideTemperatureCorrection);
+	EEPROM.commit();
+}

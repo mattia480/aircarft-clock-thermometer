@@ -80,6 +80,19 @@ extern lv_obj_t * ui_MinuteDropdown;
 void ui_event_SaveClockBtn(lv_event_t * e);
 extern lv_obj_t * ui_SaveClockBtn;
 extern lv_obj_t * ui_SaveclockBtnLabel;
+// SCREEN: ui_AdvancedSettings
+void ui_AdvancedSettings_screen_init(void);
+extern lv_obj_t * ui_AdvancedSettings;
+extern lv_obj_t * ui_AdvancedSettingsLabel;
+extern lv_obj_t * ui_AdjustInsideTempLabel;
+void ui_event_AdjustInsideTempDropdown(lv_event_t * e);
+extern lv_obj_t * ui_AdjustInsideTempDropdown;
+extern lv_obj_t * ui_AdjustOutsideTempLabel;
+void ui_event_AdjustOutsideTempDropdown(lv_event_t * e);
+extern lv_obj_t * ui_AdjustOutsideTempDropdown;
+void ui_event_BackSettingsBtn(lv_event_t * e);
+extern lv_obj_t * ui_BackSettingsBtn;
+extern lv_obj_t * ui_BackSettingsBtnLabel;
 extern lv_obj_t * ui____initial_actions0;
 
 LV_IMG_DECLARE(ui_img_adc_logo_png);    // assets\ADC_logo.png

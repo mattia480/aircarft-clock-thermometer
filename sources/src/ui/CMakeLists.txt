@@ -1,6 +1,7 @@
 SET(SOURCES screens/ui_SplashScreen.c
     screens/ui_Main.c
     screens/ui_Settings.c
+    screens/ui_AdvancedSettings.c
     ui.c
     ui_helpers.c
     images/ui_img_adc_logo_png.c

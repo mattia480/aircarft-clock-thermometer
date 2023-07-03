@@ -34,3 +34,11 @@ def ResetRuntime(event_struct):
 def FuelTankAlertValueChange(event_struct):
     return
 
+
+def AdjustIntTempValueChange(event_struct):
+    return
+
+
+def AdjustExtTempValueChange(event_struct):
+    return
+
