@@ -38,8 +38,8 @@ Adafruit_BMP085 bmp;
 
 // Temperature sensor thermistor (inside)
 double adcMax = 4095.0; // ADC resolution 12-bit (0-4095)
-double R1 = 46400.0;    // Resistnce of the known resistor
-double Ro = 37000.0;    // Resistance of Thermistor at 25 degree Celsius
+double R1 = 10040.0;    // Resistnce of the known resistor (10.04K)
+double Ro = 10000.0;    // Resistance of Thermistor at 25 degree Celsius (10K)
 double Beta = 3950.0;   // Beta value
 double To = 298.15;     // Temperature in Kelvin for 25 degree Celsius
 
@@ -74,7 +74,7 @@ void setup()
   rtcInit = rtc.begin(&I2CBME); // Initialize RTC
   bmpInit = bmp.begin(BMP085_ULTRAHIGHRES, &I2CBME); // Initialize BMP Pressure Sensor
   outsideTempSensor.begin(); // Initialize DHT Temperature Sensor
-  delay(700);
+  delay(2250);
   dhtInit = !(isnan(outsideTempSensor.readHumidity()) || isnan(outsideTempSensor.readTemperature()));
 
   // Only for set RTC DateTime - (1m 30s for compile time and upload)
@@ -155,7 +155,7 @@ void setup()
   }
 
   // Load main screen after splash
-  delay(3500);
+  delay(2000);
   lv_disp_load_scr(ui_Main);
 }
 
@@ -382,6 +382,8 @@ void loop()
 
   if(dhtInit)
     updateOutsideTemperature();
+  else
+    dhtInit = !(isnan(outsideTempSensor.readHumidity()) || isnan(outsideTempSensor.readTemperature()));
   
   updateRunTime();
 
