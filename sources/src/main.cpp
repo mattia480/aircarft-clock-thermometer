@@ -191,7 +191,7 @@ void updatePressure() {
 }
 
 float thermistorAverageTemperature(float currentValueFromThermistor) {
-  const int qtyReads = 25;
+  const int qtyReads = 75;
   static bool fistExecution = true;
   static float readings[qtyReads];
   static int readIndex = 0;
