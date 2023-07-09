@@ -31,6 +31,10 @@ They can be bought in the [Sunton Store](https://www.aliexpress.com/store/110019
 #### UI Example
 ![UI Example](assets/images/Berna_Fly_Clock_Thermometer_UI.png)
 
+#### Installation Example
+![Install Example 1](assets/images/final_installation1.jpg)
+![Install Example 2](assets/images/final_installation2.jpg)
+
 ### Code
 
 The project can be edited with [Visual Studio Code](https://code.visualstudio.com) with [PlatformIO](https://platformio.org) extension installed
